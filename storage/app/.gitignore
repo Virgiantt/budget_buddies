@@ -1,0 +1,9 @@
+*
+!private/
+!public/
+!.gitignore
+CLAUDE.md
+AGENTS.md
+.env
+/vendor/
+/node_modules/
