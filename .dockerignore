@@ -14,3 +14,9 @@ README.md
 DEPLOYMENT.md
 expense.sql
 vercel.json
+.github
+compose.yml
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+database/*.sqlite*
