@@ -11,7 +11,7 @@
         <li><a class="nav-link {{ request()->routeIs('budgets.*') ? 'active' : '' }}" href="{{ route('budgets.index') }}">Anggaran</a></li>
       </ul>
       <div class="d-flex align-items-center gap-3">
-        <span class="muted">{{ auth()->user()?->U_name ?? 'Kyla' }}</span>
+        <span class="muted">{{ auth()->user()?->name ?? 'Pengguna' }}</span>
         <form action="{{ route('logout') }}" method="POST">@csrf<button class="btn btn-soft btn-sm">Keluar</button></form>
       </div>
     </div>

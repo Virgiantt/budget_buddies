@@ -3,57 +3,89 @@
 namespace App\Http\Controllers;
 
 use App\Models\Account;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class AccountPageController extends Controller
 {
-public function create()
-{
-    return view('accounts.create');
-}
+    public function index()
+    {
+        $accounts = Account::where(
+            'Users_U_id',
+            auth()->id()
+        )->orderBy('A_name')->get();
 
-public function store(\Illuminate\Http\Request $request)
-{
-    $data = $request->validate([
-        'A_name' => 'required|string|max:255',
-        'A_account_type' => 'required|string|max:100',
-        'A_initial_balance' => 'required|numeric|min:0',
-        'Users_U_id' => 'required|exists:users,U_id',
-    ]);
+        return view('accounts.index', compact('accounts'));
+    }
 
-    \App\Models\Account::create($data);
+    public function create()
+    {
+        return redirect()->route('accounts.index');
+    }
 
-    return redirect()->route('accounts.index')
-        ->with('success', 'Akun berhasil ditambahkan.');
-}
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'A_name' => 'required|string|max:255',
+            'A_account_type' => 'required|in:Tunai,Bank,E-wallet',
+            'A_initial_balance' => 'required|numeric|min:0',
+        ]);
 
-public function edit(string $id)
-{
-    $account = \App\Models\Account::findOrFail($id);
+        do {
+            $id = strtoupper(Str::random(6));
+        } while (Account::where('A_id', $id)->exists());
 
-    return view('accounts.edit', compact('account'));
-}
+        $data['A_id'] = $id;
+        $data['Users_U_id'] = auth()->id();
 
-public function update(\Illuminate\Http\Request $request, string $id)
-{
-    $account = \App\Models\Account::findOrFail($id);
+        Account::create($data);
 
-    $data = $request->validate([
-        'A_name' => 'required|string|max:255',
-        'A_account_type' => 'required|string|max:100',
-        'A_initial_balance' => 'required|numeric|min:0',
-    ]);
+        return redirect()
+            ->route('accounts.index')
+            ->with('success', 'Akun berhasil ditambahkan.');
+    }
 
-    $account->update($data);
+    public function edit(string $id)
+    {
+        $account = Account::where('Users_U_id', auth()->id())
+            ->findOrFail($id);
 
-    return redirect()->route('accounts.index')
-        ->with('success', 'Akun berhasil diperbarui.');
-}
+        return view('accounts.edit', compact('account'));
+    }
 
-public function destroy(string $id)
-{
-    \App\Models\Account::findOrFail($id)->delete();
+    public function update(Request $request, string $id)
+    {
+        $account = Account::where('Users_U_id', auth()->id())
+            ->findOrFail($id);
 
-    return redirect()->route('accounts.index')
-        ->with('success', 'Akun berhasil dihapus.');
-}
+        $data = $request->validate([
+            'A_name' => 'required|string|max:255',
+            'A_account_type' => 'required|in:Tunai,Bank,E-wallet',
+            'A_initial_balance' => 'required|numeric|min:0',
+        ]);
+
+        $account->update($data);
+
+        return redirect()
+            ->route('accounts.index')
+            ->with('success', 'Akun berhasil diperbarui.');
+    }
+
+    public function destroy(string $id)
+    {
+        $account = Account::where('Users_U_id', auth()->id())
+            ->findOrFail($id);
+
+        if ($account->transactions()->exists()) {
+            return redirect()
+                ->route('accounts.index')
+                ->with('error', 'Akun tidak bisa dihapus karena masih memiliki transaksi.');
+        }
+
+        $account->delete();
+
+        return redirect()
+            ->route('accounts.index')
+            ->with('success', 'Akun berhasil dihapus.');
+    }
 }

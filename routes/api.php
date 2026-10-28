@@ -1,4 +1,3 @@
-
 <?php
 
 use Illuminate\Http\Request;
@@ -9,16 +8,21 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\UserController;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::name('api.')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    })->middleware('auth:sanctum');
 
-Route::apiResource('accounts', AccountController::class);
-Route::apiResource('categories', CategoryController::class);
-Route::apiResource('transactions', TransactionController::class);
-Route::get('/budgets/{id}/usage', [
-    \App\Http\Controllers\BudgetController::class,
-    'usage'
-]);
-Route::apiResource('budgets', BudgetController::class);
-Route::apiResource('users', UserController::class);
+    Route::apiResource('accounts', AccountController::class);
+
+    Route::apiResource('categories', CategoryController::class);
+
+    Route::apiResource('transactions', TransactionController::class);
+
+    Route::get('/budgets/{id}/usage', [BudgetController::class, 'usage'])
+        ->name('budgets.usage');
+
+    Route::apiResource('budgets', BudgetController::class);
+
+    Route::apiResource('users', UserController::class);
+});

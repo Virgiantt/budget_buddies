@@ -6,6 +6,6 @@
     </div>
   @endif
 @endforeach
-@if ($errors->any())
+@if (isset($errors) && $errors->any())
   <div class="alert alert-danger fw-bold" style="border-radius:14px">Ada isian yang belum benar. Cek pesan merah di bawah kolom.</div>
 @endif

@@ -23,11 +23,16 @@ class Budget extends Model
         'B_month',
         'B_year',
         'Categories_C_id',
+        'Users_U_id',
     ];
 
-    public function category()
-{
-    return $this->belongsTo(Category::class, 'Categories_C_id', 'C_id');
-}
+    public function user()
+    {
+        return $this->belongsTo(AuthUser::class, 'Users_U_id', 'id');
+    }
 
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'Categories_C_id', 'C_id');
+    }
 }

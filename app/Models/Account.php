@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\AuthUser;
 use Illuminate\Database\Eloquent\Model;
 
 class Account extends Model
@@ -27,7 +28,7 @@ class Account extends Model
 
     public function user()
 {
-    return $this->belongsTo(User::class, 'Users_U_id', 'U_id');
+    return $this->belongsTo(AuthUser::class, 'Users_U_id', 'id');
 }
 
 public function transactions()
