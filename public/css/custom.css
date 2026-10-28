@@ -27,5 +27,5 @@ th{font-size:.8rem;color:#5A6F8E;font-weight:700}
 .seg input:checked+.l-out{background:var(--pink-soft);border-color:#E8789A;color:#8A2B4D}
 .bar{height:14px;border-radius:99px;background:var(--blue-soft);overflow:hidden}
 .bar>div{height:100%;border-radius:99px}
-.bar-ok{background:#5B8FD1}.bar-warn{background:#E8B922}.bar-over{background:#E8789A}
+.bar-ok{background:#5B8FD1}.bar-warn{background:#E8B922}.bar-over{background:#aa8a93}
 .guest{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
