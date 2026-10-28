@@ -1,0 +1,16 @@
+.git
+.env
+.env.*
+!.env.example
+vendor
+node_modules
+public/build
+storage/logs
+storage/framework/cache
+storage/framework/sessions
+storage/framework/views
+tests
+README.md
+DEPLOYMENT.md
+expense.sql
+vercel.json
