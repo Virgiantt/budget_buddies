@@ -7,11 +7,31 @@ use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
-    // Menampilkan semua transaksi
-    public function index()
-    {
-        return response()->json(Transaction::all());
+
+public function index(\Illuminate\Http\Request $request)
+{
+    $query = Transaction::query();
+
+    if ($request->filled('start_date')) {
+        $query->whereDate(
+            'T_transaction_date',
+            '>=',
+            $request->start_date
+        );
     }
+
+    if ($request->filled('end_date')) {
+        $query->whereDate(
+            'T_transaction_date',
+            '<=',
+            $request->end_date
+        );
+    }
+
+    return response()->json(
+        $query->orderByDesc('T_transaction_date')->get()
+    );
+}
 
     // Menambahkan transaksi
     public function store(Request $request)

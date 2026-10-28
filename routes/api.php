@@ -16,5 +16,9 @@ Route::get('/user', function (Request $request) {
 Route::apiResource('accounts', AccountController::class);
 Route::apiResource('categories', CategoryController::class);
 Route::apiResource('transactions', TransactionController::class);
+Route::get('/budgets/{id}/usage', [
+    \App\Http\Controllers\BudgetController::class,
+    'usage'
+]);
 Route::apiResource('budgets', BudgetController::class);
 Route::apiResource('users', UserController::class);

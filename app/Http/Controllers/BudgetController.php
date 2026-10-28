@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Budget;
 use Illuminate\Http\Request;
+use App\Models\Transaction;
 
 class BudgetController extends Controller
 {
@@ -59,4 +60,35 @@ class BudgetController extends Controller
             'message' => 'Budget berhasil dihapus'
         ]);
     }
+
+    
+public function usage(string $id)
+{
+    $budget = Budget::with('category')->findOrFail($id);
+
+    $spent = Transaction::where(
+        'Categories_C_id',
+        $budget->Categories_C_id
+    )
+        ->where('T_type', 'expense')
+        ->whereYear('T_transaction_date', $budget->B_year)
+        ->whereMonth('T_transaction_date', $budget->B_month)
+        ->sum('T_amount');
+
+    $limit = (float) $budget->B_amount_limit;
+    $remaining = $limit - $spent;
+    $percentage = $limit > 0
+        ? round(($spent / $limit) * 100, 2)
+        : 0;
+
+    return response()->json([
+        'budget' => $budget,
+        'amount_limit' => $limit,
+        'total_spent' => $spent,
+        'remaining' => $remaining,
+        'percentage_used' => $percentage,
+        'is_over_budget' => $spent > $limit,
+    ]);
+}
+
 }
