@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: bcmath, pdo_mysql, sqlite3, zip
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Run tests
+        run: php artisan test
+
+  deploy:
+    name: Deploy to VPS
+    needs: test
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Deploy over SSH (password auth)
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          command_timeout: 20m
+          script_stop: true
+          script: |
+            set -e
+            cd /opt/budget-buddies
+
+            if [ ! -f .env ]; then
+              echo "ERROR: /opt/budget-buddies/.env tidak ada."
+              exit 1
+            fi
+
+            git fetch --prune origin main
+            git reset --hard FETCH_HEAD
+
+            docker compose build --pull
+            docker compose run --rm app php artisan migrate --force
+            docker compose up -d --wait --wait-timeout 240
+
+            docker compose exec -T app php artisan config:cache
+            docker compose exec -T app php artisan view:cache
+            docker compose exec -T app php artisan queue:restart
+
+            docker image prune -f
+            docker compose ps

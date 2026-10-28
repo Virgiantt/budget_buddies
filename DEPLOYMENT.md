@@ -216,6 +216,18 @@ docker compose logs --tail=50 app web
 docker compose exec app php artisan about
 ```
 
+**`Database file at path [...] does not exist`**
+
+File SQLite belum ada di volume. Entrypoint sekarang membuatnya otomatis
+(`docker/php/entrypoint.sh`), jadi kalau error ini masih muncul berarti image
+masih lama - jalankan `docker compose build` lalu `docker compose up -d`.
+
+**`no such table: jobs` / `no such table: cache` di log `queue`**
+
+Migrasi belum dijalankan. Container `queue` akan restart sendiri dan normal
+setelah `docker compose run --rm app php artisan migrate --force` selesai.
+Urutan yang benar: migrasi dulu, baru `up -d`.
+
 **`No application encryption key has been specified`**
 
 `APP_KEY` di `.env` masih kosong - ulangi langkah 1d lalu
