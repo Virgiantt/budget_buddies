@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Dashboard')
 @section('content')
-<h1 class="h3 mb-1">Hai, {{ auth()->user()?->U_name ?? 'Kyla' }}! 👋</h1>
+<h1 class="h3 mb-1">Hai, {{ auth()->user()->name ?? 'Pengguna' }}! 👋</h1>
 <p class="muted mb-4">Ringkasan keuanganmu</p>
 
 <div class="row g-3 mb-4">

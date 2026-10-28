@@ -10,51 +10,80 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Total pemasukan dan pengeluaran
-        $totalIncome = Transaction::where('T_type', 'income')
+        // ID pengguna yang sedang login
+        $userId = auth()->id();
+
+        // Ambil hanya transaksi dari akun milik pengguna tersebut
+        $userTransactions = function () use ($userId) {
+            return Transaction::whereHas('account', function ($query) use ($userId) {
+                $query->where('Users_U_id', $userId);
+            });
+        };
+
+        // Total pemasukan pengguna
+        $totalIncome = $userTransactions()
+            ->where('T_type', 'income')
             ->sum('T_amount');
 
-        $totalExpense = Transaction::where('T_type', 'expense')
+        // Total pengeluaran pengguna
+        $totalExpense = $userTransactions()
+            ->where('T_type', 'expense')
             ->sum('T_amount');
 
-        // Total saldo awal seluruh akun
-        $initialBalance = Account::sum('A_initial_balance');
+        // Total saldo awal akun milik pengguna
+        $initialBalance = Account::where('Users_U_id', $userId)
+            ->sum('A_initial_balance');
 
-        // Saldo akhir
+        // Saldo akhir pengguna
         $balance = $initialBalance + $totalIncome - $totalExpense;
 
-        // Transaksi terbaru beserta kategori
-        $recentTransactions = Transaction::with('category')
+        // Lima transaksi terbaru milik pengguna
+        $recentTransactions = $userTransactions()
+            ->with('category')
             ->orderByDesc('T_transaction_date')
             ->limit(5)
             ->get();
 
-        // Data grafik 7 hari terakhir
+        // Data grafik tujuh hari terakhir
         $startDate = Carbon::today()->subDays(6);
         $endDate = Carbon::today();
 
-        $transactions = Transaction::whereBetween(
-            'T_transaction_date',
-            [$startDate, $endDate]
-        )->get();
+        $transactions = $userTransactions()
+            ->whereBetween('T_transaction_date', [
+                $startDate->toDateString(),
+                $endDate->toDateString(),
+            ])
+            ->get();
 
         $labels = [];
         $income = [];
         $expense = [];
 
-        for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
+        for (
+            $date = $startDate->copy();
+            $date->lte($endDate);
+            $date->addDay()
+        ) {
             $day = $date->toDateString();
 
             $labels[] = $date->translatedFormat('d M');
 
             $income[] = $transactions
                 ->where('T_type', 'income')
-                ->filter(fn ($t) => Carbon::parse($t->T_transaction_date)->toDateString() === $day)
+                ->filter(function ($transaction) use ($day) {
+                    return Carbon::parse(
+                        $transaction->T_transaction_date
+                    )->toDateString() === $day;
+                })
                 ->sum('T_amount');
 
             $expense[] = $transactions
                 ->where('T_type', 'expense')
-                ->filter(fn ($t) => Carbon::parse($t->T_transaction_date)->toDateString() === $day)
+                ->filter(function ($transaction) use ($day) {
+                    return Carbon::parse(
+                        $transaction->T_transaction_date
+                    )->toDateString() === $day;
+                })
                 ->sum('T_amount');
         }
 

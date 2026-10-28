@@ -21,16 +21,21 @@ class Category extends Model
         'C_id',
         'C_name',
         'C_type',
+        'Users_U_id',
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(AuthUser::class, 'Users_U_id', 'id');
+    }
+
     public function transactions()
-{
-    return $this->hasMany(Transaction::class, 'Categories_C_id', 'C_id');
-}
+    {
+        return $this->hasMany(Transaction::class, 'Categories_C_id', 'C_id');
+    }
 
-public function budgets()
-{
-    return $this->hasMany(Budget::class, 'Categories_C_id', 'C_id');
-}
-
+    public function budgets()
+    {
+        return $this->hasMany(Budget::class, 'Categories_C_id', 'C_id');
+    }
 }
