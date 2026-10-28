@@ -16,7 +16,7 @@ Isi nilai rahasia yang kuat. Buat `APP_KEY` dengan perintah berikut (jalankan di
 php artisan key:generate --show
 ```
 
-Atur `APP_URL` ke URL HTTPS final, misalnya `https://budget.domain-anda.com`. Jangan commit `.env.production`.
+Atur `APP_URL` ke `http://IP-VPS`, misalnya `http://103.10.20.30`. Jangan commit `.env.production`.
 
 ## 2. Build dan jalankan
 
@@ -33,9 +33,11 @@ docker compose --env-file .env.production ps
 docker compose --env-file .env.production logs -f web app queue scheduler
 ```
 
-## 3. Pasang HTTPS
+## 3. Akses via IP VPS
 
-Letakkan reverse proxy HTTPS (Caddy, Nginx, atau Traefik) di depan port `APP_PORT` dari service `web`. Proxy harus meneruskan header `Host` dan `X-Forwarded-Proto`. Bila memakai firewall, buka hanya port 80/443 milik reverse proxy; MariaDB tetap internal Docker.
+Aplikasi diakses lewat `http://IP-VPS`. Buka port 80 di firewall VPS. Service `web` yang mempublikasikan port 80; MariaDB tetap internal Docker dan tidak dipublikasikan.
+
+Koneksi ini belum terenkripsi (HTTP). Login dan data dikirim tanpa TLS, sehingga sebaiknya hanya dipakai untuk uji coba atau sampai domain/HTTPS disiapkan.
 
 ## Update rilis
 

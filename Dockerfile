@@ -22,6 +22,13 @@ COPY vite.config.js ./
 RUN npm run build
 
 
+FROM nginx:1.27-alpine AS web
+
+COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY --from=vendor /var/www/html/public /var/www/html/public
+COPY --from=assets /app/public/build /var/www/html/public/build
+
+
 FROM php:8.3-fpm-bookworm AS app
 
 WORKDIR /var/www/html
