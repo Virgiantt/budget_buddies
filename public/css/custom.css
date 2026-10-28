@@ -1,0 +1,31 @@
+:root{--cream:#FFF8EC;--blue:#2F5D9E;--blue-soft:#DDEBFA;--yellow:#FFE29A;--pink-soft:#FDE3EA;--ink:#23395B;--bs-primary:#2F5D9E;--bs-primary-rgb:47,93,158}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:var(--ink);font-weight:500}
+h1,h2,h3,h4,.navbar-brand,.btn{font-family:'Montserrat',sans-serif}
+h1,h2,h3,h4{font-weight:700}
+.navbar{background:#fff;border-bottom:3px solid var(--blue-soft)}
+.navbar-brand{color:var(--blue)!important;font-weight:800}
+.nav-link{border-radius:999px;font-weight:700;color:var(--ink)!important;padding:.6rem 1rem!important}
+.nav-link.active{background:var(--yellow)}
+.card{border:0;border-radius:22px;box-shadow:0 5px 0 var(--blue-soft)}
+.stat{border-radius:22px;padding:22px}
+.btn{border-radius:14px;font-weight:700;padding:.7rem 1.3rem}
+.btn-sm{padding:.4rem .8rem}
+.btn-primary{background:var(--blue);border-color:var(--blue)}
+.btn-primary:hover{background:#244b82;border-color:#244b82}
+.btn-soft{background:var(--pink-soft);color:#7A2E4A;border:0}
+.btn-danger{background:#B5384F;border-color:#B5384F}
+.badge-in{background:var(--blue-soft);color:#1F4E8C}
+.badge-out{background:var(--pink-soft);color:#8A2B4D}
+.form-control,.form-select{border:2px solid #D3E3F5;border-radius:12px;min-height:46px;font-weight:600;color:var(--ink)}
+.form-control:focus,.form-select:focus{border-color:var(--blue);box-shadow:0 0 0 .2rem rgba(47,93,158,.15)}
+.form-label{font-weight:700;font-size:.85rem}
+th{font-size:.8rem;color:#5A6F8E;font-weight:700}
+.muted{color:#5A6F8E;font-weight:600}
+.seg{display:flex;gap:10px}.seg input{display:none}
+.seg label{flex:1;text-align:center;padding:12px;border-radius:14px;border:2px solid #D3E3F5;font-weight:700;cursor:pointer;margin:0;background:#fff}
+.seg input:checked+.l-in{background:var(--blue-soft);border-color:var(--blue);color:#1F4E8C}
+.seg input:checked+.l-out{background:var(--pink-soft);border-color:#E8789A;color:#8A2B4D}
+.bar{height:14px;border-radius:99px;background:var(--blue-soft);overflow:hidden}
+.bar>div{height:100%;border-radius:99px}
+.bar-ok{background:#5B8FD1}.bar-warn{background:#E8B922}.bar-over{background:#E8789A}
+.guest{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
